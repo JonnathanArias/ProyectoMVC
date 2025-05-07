@@ -17,39 +17,75 @@ namespace AppWeb_MVC.Controllers
 
         //vamos a traer los datos de la BD de usuarios de forma asincrona y tambien que envie los datos a la vista Index 
         //enlista todos los usuarios!!
-        public async Task<IActionResult> Index() 
+        public async Task<IActionResult> Index()
         {
-            var usuarios = _context.Usuarios.ToListAsync();
-            return View(usuarios);//pasa la lista de usuarios a la vista
+            var usuarios = await _context.Usuarios.ToListAsync();
+            return View(usuarios);  // Pasa la lista de usuarios a la vista
         }
 
         // GET: /Usuario/Crear (Muestra el formulario vacío)
         public IActionResult Crear()
         {
            return View();
-      }
-
-        // GET: /Usuario/ObtenerTodos (Para DataTables)
-        // POST: /Usuario/Crear (Recibe los datos del formulario)
+        }
         #region
+        // GET: /Usuario/ObtenerTodos (Para DataTables)
+        [HttpGet]
+        public async Task<IActionResult> ObtenerTodos()
+        {
+            var usuarios = await _context.Usuarios.ToListAsync();
+            return Json(new { data = usuarios });
+        }
+
+        #endregion
+
+        // POST: /Usuario/Crear (Recibe los datos del formulario)
+         #region
+          
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Crear(Usuario usuario)
         {
             if (ModelState.IsValid)
             {
-                usuario.FechaCreacion = DateTime.Now; // Esto asigna la fecha de creación
+                // Verificar si ya existe un usuario con el mismo número de documento
+                bool existeDocumento = await _context.Usuarios
+                    .AnyAsync(u => u.NumeroDocumento == usuario.NumeroDocumento);
 
-                _context.Usuarios.Add(usuario);  // Agrega el nuevo usuario a la base de datos
-                await _context.SaveChangesAsync();  // Guarda los cambios
+                if (existeDocumento)
+                {
+                    // Agregar error al modelo
+                    ModelState.AddModelError("NumeroDocumento", "Ya existe un usuario con este número de documento.");
+                    return View(usuario); // Devuelve a la vista con el error mostrado
+                }
 
-                return RedirectToAction(nameof(Index));  // Redirige a la vista Index después de guardar
+                usuario.FechaCreacion = DateTime.Now;
+                _context.Usuarios.Add(usuario);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
             }
 
-            return View(usuario);  // Si el modelo no es válido, retorna a la vista con los datos del usuario y los errores
+            return View(usuario);
+        }
+
+
+        [HttpDelete]
+        public async Task<IActionResult> Eliminar(int id)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario == null)
+            {
+                return Json(new { success = false, message = "Error al eliminar" });
+            }
+
+            _context.Usuarios.Remove(usuario);
+            await _context.SaveChangesAsync();
+            return Json(new { success = true, message = "Usuario eliminado exitosamente" });
         }
 
 
         #endregion
+
     }
 }

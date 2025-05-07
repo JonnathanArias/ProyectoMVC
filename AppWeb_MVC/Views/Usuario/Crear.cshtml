@@ -1,0 +1,74 @@
+﻿@model SistemaInventario.Modelos.Usuario
+
+<h2>Crear Usuario</h2>
+
+<form asp-action="Crear" method="post" class="row g-3">
+    <div class="col-md-4">
+        <label asp-for="NumeroDocumento" class="form-label"></label>
+        <input asp-for="NumeroDocumento" class="form-control" />
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Nombre" class="form-label"></label>
+        <input asp-for="Nombre" class="form-control" />
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Apellido" class="form-label"></label>
+        <input asp-for="Apellido" class="form-control" />
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Correo" class="form-label"></label>
+        <input asp-for="Correo" class="form-control" type="email" />
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="ContraseñaHash" class="form-label"></label>
+        <input asp-for="ContraseñaHash" class="form-control" type="password" />
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Rol" class="form-label"></label>
+        <select asp-for="Rol" class="form-select">
+            <option value="Admin">Admin</option>
+            <option value="Usuario">Usuario</option>
+        </select>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Ciudad" class="form-label"></label>
+        <input asp-for="Ciudad" class="form-control" />
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="NombreUsuario" class="form-label"></label>
+        <input asp-for="NombreUsuario" class="form-control" />
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="FechaCreacion" class="form-label"></label>
+        <input asp-for="FechaCreacion" class="form-control" type="date" />
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Estado" class="form-label"></label>
+        <select asp-for="Estado" class="form-select">
+            <option value="true">Activo</option>
+            <option value="false">Inactivo</option>
+        </select>
+    </div>
+
+    <div class="col-12 text-end">
+        <button type="submit" class="btn btn-success">Crear Usuario</button>
+    </div>
+
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
+
