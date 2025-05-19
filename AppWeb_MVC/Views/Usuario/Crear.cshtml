@@ -1,0 +1,16 @@
+﻿@model SistemaInventario.Modelos.Usuario
+@{
+    ViewData["Title"] = "Crear Usuario";
+}
+<h2>@ViewData["Title"]</h2>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Crear" method="post">
+            @await Html.PartialAsync("_FormularioUsuario", Model)
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
