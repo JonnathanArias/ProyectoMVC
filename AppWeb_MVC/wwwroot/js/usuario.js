@@ -40,8 +40,8 @@ function loadDataTable() {
                     // Botones de acciones
                     return `
                         <div class="text-center">
-                            <a href="/Usuario/Editar/${data}" class="btn btn-warning btn-sm">Editar</a>
-                            <a onclick="Delete('/Usuario/Eliminar/${data}')" class="btn btn-danger btn-sm">Eliminar</a>
+                             <a href="/Usuario/Editar/${data}" class="btn btn-warning btn-sm">Editar</a>
+                           <a href="javascript:void(0)" onclick="Delete(${data})" class="btn btn-danger btn-sm">Eliminar</a>
                         </div>
                     `;
                 },
@@ -67,7 +67,7 @@ function loadDataTable() {
 }
 
 // Función para eliminar con SweetAlert
-function Delete(url) {
+function Delete(id) {
     Swal.fire({
         title: "¿Estás seguro?",
         text: "¡No podrás revertir esta acción!",
@@ -79,16 +79,13 @@ function Delete(url) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                type: "DELETE",
-                url: url,
-                success: function (data) {
-                    if (data.success) {
-                        datatable.ajax.reload();
-                        Swal.fire("¡Eliminado!", data.message, "success");
-                    } else {
-                        Swal.fire("Error", data.message, "error");
-                    }
+                type: "POST",
+                url: `/Usuario/Eliminar`,
+                headers: {
+                    "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
                 }
+
+
             });
         }
     });

@@ -1,5 +1,36 @@
 ﻿@model IEnumerable<SistemaInventario.Modelos.Usuario>
 
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+
+@section Scripts {
+    <script>
+        // Cierra automáticamente las alertas después de 5 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            let alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    let bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }, 5000); // 5000 milisegundos = 5 segundos
+            });
+        });
+    </script>
+}
+
 <h2>Usuarios</h2>
 
 <a asp-action="Crear" class="btn btn-success">Nuevo Usuario</a>
@@ -19,14 +50,20 @@
         @foreach (var usuario in Model)
         {
             <tr>
+                <td>@usuario.NumeroDocumento</td>
                 <td>@usuario.Nombre</td>
                 <td>@usuario.Apellido</td>
-                <td>@usuario.NombreUsuario</td>
                 <td>@usuario.Correo</td>
                 <td>@usuario.Rol</td>
                 <td>
                     <a asp-action="Editar" asp-route-id="@usuario.Id" class="btn btn-warning">Editar</a>
-                    <a asp-action="Eliminar" asp-route-id="@usuario.Id" class="btn btn-danger" onclick="return confirm('¿Estás seguro?')">Eliminar</a>
+                    <form asp-action="Eliminar" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@usuario.Id" />
+                        <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('¿Estás seguro de eliminar este usuario?')">
+                            Eliminar
+                        </button>
+                    </form>
                 </td>
             </tr>
         }

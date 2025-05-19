@@ -1,0 +1,85 @@
+﻿@model SistemaInventario.Modelos.Usuario
+
+
+
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<input type="hidden" asp-for="Id" />
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <label asp-for="NumeroDocumento" class="form-label"></label>
+        <input asp-for="NumeroDocumento" class="form-control" />
+        <span asp-validation-for="NumeroDocumento" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Nombre" class="form-label"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Apellido" class="form-label"></label>
+        <input asp-for="Apellido" class="form-control" />
+        <span asp-validation-for="Apellido" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Correo" class="form-label"></label>
+        <input asp-for="Correo" class="form-control" type="email" />
+        <span asp-validation-for="Correo" class="text-danger"></span>
+    </div>
+
+    @if (Model?.Id == 0)
+    {
+        <div class="col-md-4">
+            <label asp-for="ContraseñaHash" class="form-label"></label>
+            <input asp-for="ContraseñaHash" class="form-control" type="password" />
+            <span asp-validation-for="ContraseñaHash" class="text-danger"></span>
+        </div>
+    }
+
+    <div class="col-md-4">
+        <label asp-for="Rol" class="form-label"></label>
+        <select asp-for="Rol" class="form-select">
+            <option value="Admin">Admin</option>
+            <option value="Usuario">Usuario</option>
+        </select>
+        <span asp-validation-for="Rol" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Ciudad" class="form-label"></label>
+        <input asp-for="Ciudad" class="form-control" />
+        <span asp-validation-for="Ciudad" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="NombreUsuario" class="form-label"></label>
+        <input asp-for="NombreUsuario" class="form-control" />
+        <span asp-validation-for="NombreUsuario" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="FechaCreacion" class="form-label"></label>
+        <input asp-for="FechaCreacion" class="form-control" type="date" />
+        <span asp-validation-for="FechaCreacion" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="Estado" class="form-label"></label>
+        <select asp-for="Estado" class="form-select">
+            <option value="true">Activo</option>
+            <option value="false">Inactivo</option>
+        </select>
+        <span asp-validation-for="Estado" class="text-danger"></span>
+    </div>
+
+    <div class="col-12 text-end mt-4">
+        <button type="submit" class="btn btn-@(Model.Id == 0 ? "success" : "primary")">
+            @(Model.Id == 0 ? "Crear Usuario" : "Actualizar Usuario")
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </div>
+</div>
