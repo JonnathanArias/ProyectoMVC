@@ -112,74 +112,63 @@ namespace AppWeb_MVC.Controllers
         //validar el de editar 
 
 
-        // GET: Usuario/Editar/5
+        //// GET: Usuario/Editar/5
         public async Task<IActionResult> Editar(int? id)
         {
-            if (id == null)
+           if (id == null)
                 return NotFound();
 
-            var usuario = await _context.Usuarios.FindAsync(id);
+           var usuario = await _context.Usuarios.FindAsync(id);
 
-            if (usuario == null)
+           if (usuario == null)
                 return NotFound();
 
-            return View(usuario);
+           return View(usuario);
         }
 
         // POST: Usuario/Editar/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(int id, Usuario usuario)
+        public async Task<IActionResult> Editar(int id, UsuarioEditarViewModel model)
         {
-            if (id != usuario.Id)
+            if (id != model.Id)
                 return NotFound();
 
             if (!ModelState.IsValid)
+                return View(model);
+
+            var usuarioExistente = await _context.Usuarios.FindAsync(id);
+            if (usuarioExistente == null)
+                return NotFound();
+
+            // Validar documento único
+            if (await _context.Usuarios.AnyAsync(u => u.Id != model.Id && u.NumeroDocumento == model.NumeroDocumento))
             {
-                // Debug: Verifica qué errores hay en ModelState
-                var errors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var error in errors)
-                {
-                    _logger.LogWarning($"Error de validación: {error.ErrorMessage}");
-                }
-                return View(usuario);
+                ModelState.AddModelError("NumeroDocumento", "Documento ya registrado");
+                return View(model);
             }
 
-            try
+            // Mapear datos editables
+            usuarioExistente.Nombre = model.Nombre;
+            usuarioExistente.Apellido = model.Apellido;
+            usuarioExistente.NumeroDocumento = model.NumeroDocumento;
+            usuarioExistente.Correo = model.Correo;
+            usuarioExistente.Rol = model.Rol;
+            usuarioExistente.Ciudad = model.Ciudad;
+            usuarioExistente.NombreUsuario = model.NombreUsuario;
+
+            // Solo actualiza la contraseña si se envía una nueva
+            if (!string.IsNullOrEmpty(model.ContraseñaHash))
             {
-                var usuarioExistente = await _context.Usuarios.FindAsync(id);
-                if (usuarioExistente == null)
-                    return NotFound();
-
-                // Validación de documento único
-                if (await _context.Usuarios
-                    .AnyAsync(u => u.Id != usuario.Id && u.NumeroDocumento == usuario.NumeroDocumento))
-                {
-                    ModelState.AddModelError("NumeroDocumento", "Documento ya registrado");
-                    return View(usuario);
-                }
-
-                // Actualiza solo las propiedades necesarias
-                usuarioExistente.Nombre = usuario.Nombre;
-                usuarioExistente.NumeroDocumento = usuario.NumeroDocumento;
-
-                // ... otras propiedades
-
-                await _context.SaveChangesAsync();
-
-                TempData["Success"] = $"Usuario {usuario.Nombre} actualizado";
-                return RedirectToAction(nameof(Index));
-
+                usuarioExistente.ContraseñaHash = model.ContraseñaHash; // Hashear si es necesario
             }
 
+            await _context.SaveChangesAsync();
 
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error al editar usuario");
-                TempData["Error"] = "Error inesperado al actualizar usuario";
-                return View(usuario);
-            }
+            TempData["Success"] = $"Usuario {model.Nombre} actualizado";
+            return RedirectToAction(nameof(Index));
         }
+
 
 
 
